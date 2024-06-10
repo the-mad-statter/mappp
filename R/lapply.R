@@ -36,7 +36,13 @@ mclapply_pb <- function(X, FUN, mc.cores) {
   on.exit(close(f))
   p <- parallel_mcfork()
 
-  pbb <- pbb_eta(min = 0, max = n, initial = 0, char = "=", width = 60, file = "")
+  # pbmcapply:::txtProgressBarETA() calls pbmcapply:::formatTime()
+  # but utils::getFromNamespace() breaks this and adding 
+  # formatTime <- utils::getFromNamespace("formatTime", "pbmcapply") doesn't fix it
+  # so don't do this:
+  # pbb <- pbb_eta(min = 0, max = n, initial = 0, char = "=", width = 60, file = "")
+  # do this:
+  pbb <- utils::txtProgressBar(max = n)
   
   utils::setTxtProgressBar(pbb, 0)
   progress <- 0
